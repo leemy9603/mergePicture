@@ -170,27 +170,28 @@ window.onload = function(){
 		*@param {Object} e为鼠标事件
 		*@param {string} imgVal是drag的图片
 		*/
-		dealPicture:function(e,imgVal){//imgBgw是白色背景，将图片文件进行转码并渲染到白色背景上面		
+		dealPicture:function(e,imgVal){//绘制白色矩形背景,将图片文件进行转码并渲染到白色背景上面		
 			// var img = new Image();
-			 var imgBgW = new Image();
-			 imgBgW.src = 'images/white_bg.jpg';
+			 //var imgBgW = new Image();
+			 //mgBgW.src = 'images/white_bg.jpg';
 			 //img.crossOrigin = 'anonymous';
 			 //imgBgW.crossOrigin = 'anonymous';
-			 var that = this;
-			 imgBgW.onload = function(){
-				ctx.drawImage(imgBgW,18,74,284,501);
-				var width = 0;
-				var height = 0;
-				var r = 0;// 图片原本的宽高比
-				var dx = 18;//上传图片距离手机图片左上角的横坐标
-				var dy = 74;//上传图片距离手机图片左上角的纵坐标
+			ctx.fillStyle = "#ffffff";
+			ctx.fillRect(18,74,284,501);
+			// imgBgW.onload = function(){
+			//ctx.drawImage(imgBgW,18,74,284,501);
+			var width = 0;
+			var height = 0;
+			var r = 0;// 图片原本的宽高比
+			var dx = 18;//上传图片距离手机图片左上角的横坐标
+			var dy = 74;//上传图片距离手机图片左上角的纵坐标
 			if(imgVal){
-				that.dealDragPic(dx,dy,width,height,r,e,imgVal);
+				this.dealDragPic(dx,dy,width,height,r,e,imgVal);
 			}else{
-				that.dealRenderPic(dx,dy,width,height,r,e);
+				this.dealRenderPic(dx,dy,width,height,r,e);
 			}
 			
-			}
+			//}
 		}
 	}
 
