@@ -1,0 +1,267 @@
+<!DOCTYPE>
+<html>
+<head>
+	<meta name="name" charset="utf-8" content="content">
+	<title></title>
+	<style type="text/css">
+	*{
+		padding:0;
+		margin:0;
+	}
+	body{
+		position: relative;
+	}
+	.main{
+		display: inline-block;
+		*display:inline;
+		*zoom:1;
+		height: auto;
+		width: auto;
+		margin:0 auto;
+		position: absolute;
+		top:50%;
+		left:50%;
+		transform: translate(-50%,-50%);
+		-webkit-transform:translate(-50%,-50%);
+		-moz-transform:translate(-50%,-50%);
+		-o-transform:translate(-50%,-50%);
+	}
+     .myCanvas{
+     	margin:0 auto;
+     }
+     .pickPic{
+     	padding:40px 0px;
+     	position: relative;
+     }
+     .uploadPic{
+     	width:250px;
+     	height: 30px;
+     	position: absolute;
+     	left:0px;
+     	top: 20px;
+     	opacity: 0;
+     }
+     .pickPic button{
+     	position: absolute;
+     	top:20px;
+     	left:0px;
+     	width:250px;
+     	height: 30px;
+     	text-align: center;
+     }
+     .downlaodPic{
+     	width:250px;
+     	height: 30px;
+     	text-align: center;
+     }
+	</style>
+</head>
+<body>
+<div class="main">
+	<canvas id="myCanvas" class="myCanvas" ></canvas>
+ 	<div class="pickPic">
+		<button type="button">上传</button>
+   		<input type="file" id="uploadPic" class="uploadPic"></input>
+	</div>
+	<button id="downloadPic" class="downlaodPic">下载</button>
+</div>
+
+</body>
+<script type="text/javascript">
+window.onload = function(){
+	//从本地拖拽文件经过网页时，阻止默认事件
+	window.ondragover = function(e){
+		var e = event || window.event;
+		e.preventDefault();
+	}
+
+	var canvas = document.getElementById('myCanvas');//获取canvas对象
+	var ctx = canvas.getContext('2d');//获取上下文绘图环境
+
+	var drawImage = {
+		//绘制手机外框
+		drawBg: function(){
+			var imgBg = new Image();
+			imgBg.src = "images/bg.png";
+			//imgBg.crossOrigin = 'anonymous';
+			imgBg.onload = function(){
+				var canHeight = imgBg.height;//画布的高度
+				var canWidth = imgBg.width;//画布的宽度 
+				canvas.height = canHeight;
+				canvas.width = canWidth;
+				ctx.drawImage(imgBg,0,0);
+			}
+		},
+		/**
+		*@param {number} dx为距离手机左上角的横坐标
+		*@param {number} dy为距离手机左上角的纵坐标	
+		*@param {number} width为绘制的宽度
+		*@param {number} height为绘制的高度
+		*@param {Object} e为鼠标事件
+		*/
+		drawPic: function(dx,dy,width,height,r,render,e,imgVal){//添加需要合成的图片
+			var img = new Image();
+			img.onload = function(){	
+				r = img.height/img.width;
+				if(img.width > img.height){
+					img.width = 284;
+					img.height = img.width * r;
+					height = img.height;
+					width = img.width;
+					dy = (501 -height)/2 + dy;	
+				}else{
+					img.height = 501;
+					img.width = img.height/r;
+					width = img.width;
+					height = img.height;
+					dx = (284 - width)/2 + dx;
+					if(width > 284){
+						width = 284;
+						img.width = width;
+						img.height = width * r;
+						height = img.height;	
+						dx = 18;
+						dy = (501 -height)/2 + dy;
+						}
+					}	
+					ctx.drawImage(img,dx,dy,width,height);
+				}
+				if(render){
+					img.src = e.target.result;
+				}else{
+					img.src = imgVal;
+				}
+				
+		},
+		/**
+		*@param {number} dx为距离手机左上角的横坐标
+		*@param {number} dy为距离手机左上角的纵坐标	
+		*@param {number} width为绘制的宽度
+		*@param {number} height为绘制的高度
+		*@param {number} r为图片宽高比
+		*@param {Object} e为鼠标事件
+		*/
+		dealRenderPic: function(dx,dy,width,height,r,e){
+			var that = this;
+			var render = new window.FileReader();
+				render.onload = function(e){
+					that.drawPic(dx,dy,width,height,r,render,e,null);
+			}
+				render.readAsDataURL(e.target.files[0]);
+		},
+		/**
+		*@param {number} dx为距离手机左上角的横坐标
+		*@param {number} dy为距离手机左上角的纵坐标	
+		*@param {number} width为绘制的宽度
+		*@param {number} height为绘制的高度
+		*@param {number} r为图片宽高比
+		*@param {Object} e为鼠标事件
+		*@param {string} imgVal为drag的图片
+		*/
+		dealDragPic:function(dx,dy,width,height,r,e,imgVal){
+				var  imgDrag = new Image();
+				imgDrag.src = imgVal;
+				var that  = this;
+				imgDrag.onload = function(){
+					that.drawPic(dx,dy,width,height,r,null,e,imgVal);	
+				}
+		},
+		/**
+		*@param {Object} e为鼠标事件
+		*@param {string} imgVal是drag的图片
+		*/
+		dealPicture:function(e,imgVal){//imgBgw是白色背景，将图片文件进行转码并渲染到白色背景上面		
+			// var img = new Image();
+			 var imgBgW = new Image();
+			 imgBgW.src = 'images/white_bg.jpg';
+			 //img.crossOrigin = 'anonymous';
+			 //imgBgW.crossOrigin = 'anonymous';
+			 var that = this;
+			 imgBgW.onload = function(){
+				ctx.drawImage(imgBgW,18,74,284,501);
+				var width = 0;
+				var height = 0;
+				var r = 0;// 图片原本的宽高比
+				var dx = 18;//上传图片距离手机图片左上角的横坐标
+				var dy = 74;//上传图片距离手机图片左上角的纵坐标
+			if(imgVal){
+				that.dealDragPic(dx,dy,width,height,r,e,imgVal);
+			}else{
+				that.dealRenderPic(dx,dy,width,height,r,e);
+			}
+			
+			}
+		}
+	}
+
+	
+	var drawInit = function(){//初始化当前绘画背景
+		drawImage.drawBg();//默认绘制手机外框		
+	}
+	drawInit();
+	var drawListener = function(e,imgVal){//监听上传事件，解耦
+		drawImage.dealPicture(e,imgVal);
+	}
+//本地文件在网页上drop时
+window.ondrop = function(e){
+		var e = event || window.event;
+		e.preventDefault();
+		var data = e.dataTransfer.files[0];
+		//e.target.appendChild(document.getElementById(data));
+		var imageType = data.type;
+		var typeRex = /^image/;
+		var typeVal = typeRex.test(imageType);//判断是否为image
+		var target = e.target;
+		if(target === canvas){//判断当前目标元素是否为canvas
+			//drawListener(e)
+			var imgVal = window.webkitURL.createObjectURL(data);
+			var body = document.getElementsByTagName('body');
+			drawListener(e,imgVal);
+
+		}
+	}
+	var uploadPic = document.getElementById('uploadPic');//上传图片按钮
+	uploadPic.onchange = function(e){//当点击上传按钮时
+		var e = event||window.event;
+		var type = e.target.files[0].type;
+		var typeRex = /^image/;
+		var typeVal = typeRex.test(type);//判断是否为image
+		if(typeVal){//如果上传文件为图片,发布绘制图片消息
+			drawListener(e);
+		}	
+	}
+
+	var downloadPic = document.getElementById('downloadPic');//下载按钮
+	downloadPic.onclick = function(){
+		var type = 'png';
+		download(type);
+	}
+	function download(type) {
+	    //设置保存图片的类型
+	    var imgdata = canvas.toDataURL(type);
+	    //将mime-type改为image/octet-stream,强制让浏览器下载
+	    var fixtype = function (type) {
+	    	type = type.toLocaleLowerCase().replace(/jpg/i, 'jpeg');
+	        var r = type.match(/png|jpeg|bmp|gif/)[0];
+	        return 'image/' + r;
+		}
+	    imgdata = imgdata.replace(fixtype(type), 'image/octet-stream')
+	    //将图片保存到本地
+	    var saveFile = function (data, filename) {
+	        var link = document.createElement('a');
+	        link.href = data;
+	        link.download = filename;
+	        var event = document.createEvent('MouseEvents');
+	        event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+	        link.dispatchEvent(event);
+	    }
+	    var filename = new Date().toLocaleDateString() + '.' + type;
+	    saveFile(imgdata, filename);
+	}
+
+	}
+
+
+
+</script>
+</html>
