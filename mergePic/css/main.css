@@ -1,0 +1,59 @@
+*{
+		padding:0;
+		margin:0;
+	}
+	body{
+		position: relative;
+	}
+	.main{
+		display: inline-block;
+		*display:inline;
+		*zoom:1;
+		height: auto;
+		width: auto;
+		margin:0 auto;
+		position: absolute;
+		top:50%;
+		left:50%;
+		transform: translate(-50%,-50%);
+		-webkit-transform:translate(-50%,-50%);
+		-moz-transform:translate(-50%,-50%);
+		-o-transform:translate(-50%,-50%);
+	}
+     .pickIos,.pickAndroid{
+          width:120px;
+          height: 30px;
+     }
+     .pickAndroid{
+          display: inline-block;
+          margin-left:10px;
+     }
+     .uploadPic,.downlaodPic,.uploadPicSi{
+          width:250px;
+          height: 30px;
+          text-align: center;
+     }
+     .myCanvas{
+     	margin:0 auto;
+     }
+     .pickPic{
+     	padding:40px 0px;
+     	position: relative;
+     }
+     .pickMobile{
+          padding:20px 0px;
+     }
+     .pickMobile button{
+          margin-top:10px;
+     }
+     .uploadPic{
+     	position: absolute;
+     	left:0px;
+     	top: 20px;
+     	opacity: 0;
+     }
+     .pickPic button{
+     	position: absolute;
+     	top:20px;
+     	left:0px;
+     }
